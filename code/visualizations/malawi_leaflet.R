@@ -6,6 +6,7 @@ library(leaflet)
 library(sf)
 library(dplyr)
 library(RColorBrewer)
+library(viridis)
 library(DT)
 library(tidyr) # Needed for unnest()
 
@@ -13,10 +14,13 @@ library(tidyr) # Needed for unnest()
 # LOAD PRE-PROCESSED DATA (ONCE AT STARTUP)
 # ========================================
 
+#data <- read.csv("~/../../data/adm3_summary/adm3_multivariable.csv")
 data <- read.csv("~/PycharmProjects/maziko_climate_2025_new/data/adm3_summary/adm3_multivariable.csv")
 data$high_temperature <- as.numeric(data$high_temperature)
 data$low_temperature <- as.numeric(data$low_temperature)
 data$average_temperature <- as.numeric(data$average_temperature)
+data$total_evaporation_transpiration <- data$total_evaporation_transpiration * 100
+data$total_precipitation <- data$total_precipitation * 100
 shapes <- st_read("~/PycharmProjects/maziko_climate_2025_new/data/shapefiles/mwi_adm3_shp")
 
 # ========================================
