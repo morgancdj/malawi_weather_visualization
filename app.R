@@ -106,7 +106,8 @@ ui <- page_sidebar(
       'date', 
       'Select a Date:', 
       min = '2020-01-01', 
-      max = '2025-08-31'),
+      max = '2025-08-31',
+      value = '2025-01-01'),
     selectInput(
       "var",
       label = "Choose a variable to display",
@@ -205,6 +206,7 @@ server <- function(input, output){
                    "Total Evaporation via Transpiration" = " (cm equivalent)")
     leaflet(joined) %>%
       addTiles() %>%
+      fitBounds(lng1 = 32.67, lat1 = -17.13, lng2 = 35.92, lat2 = -9.37) %>%
       addPolygons(
         fillColor = ~pal(value),
         weight = 1,
