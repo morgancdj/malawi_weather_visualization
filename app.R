@@ -20,7 +20,7 @@ data$low_temperature <- as.numeric(data$low_temperature)
 data$average_temperature <- as.numeric(data$average_temperature)
 data$total_evaporation_transpiration <- data$total_evaporation_transpiration * 100
 data$total_precipitation <- data$total_precipitation * 100
-shapes <- st_read("../../data/shapefiles/mwi_adm3_shp")
+shapes <- st_read("data/shapefiles/mwi_adm3_shp")
 
 # ========================================
 # PRE-CALCULATE PALETTES
