@@ -14,8 +14,7 @@ library(tidyr) # Needed for unnest()
 # LOAD PRE-PROCESSED DATA (ONCE AT STARTUP)
 # ========================================
 
-#data <- read.csv("~/../../data/adm3_summary/adm3_multivariable.csv")
-data <- read.csv("~/PycharmProjects/maziko_climate_2025_new/data/adm3_summary/adm3_multivariable.csv")
+data <- read.csv("https://www.dropbox.com/scl/fi/8rfx48d8kpuyk13pgo0k2/adm3_multivariable.csv?rlkey=83srmi5d905ulljewuawoq8el&st=f3uxreii&dl=1")
 data$high_temperature <- as.numeric(data$high_temperature)
 data$low_temperature <- as.numeric(data$low_temperature)
 data$average_temperature <- as.numeric(data$average_temperature)
@@ -46,36 +45,38 @@ low_temperature_palette <- colorNumeric(
 )
 
 high_dewpoint_palette <- colorNumeric(
-  palette = "Spectral",
-  domain = data$high_dewpoint_temperature,
-  reverse = TRUE
+  palette = "PuOr",
+  domain = data$high_dewpoint_temperature
 )
 
-average_dewpoint_palette <- colorNumeric(
-  palette = "Spectral",
+avg_dewpoint_palette <- colorNumeric(
+  palette = "PuOr",
   domain = data$average_dewpoint_temperature,
   reverse = TRUE
 )
 
 low_dewpoint_palette <- colorNumeric(
-  palette = "Spectral",
+  palette = "PuOr",
   domain = data$low_dewpoint_temperature,
   reverse = TRUE
 )
 
 max_windspeed_palette <- colorNumeric(
-  palette = "Blues",
-  domain = data$max_windspeed
+  palette = "mako",
+  domain = data$max_windspeed,
+  reverse = TRUE
 )
 
 avg_windspeed_palette <- colorNumeric(
-  palette = "Blues",
-  domain = data$average_windspeed
+  palette = "mako",
+  domain = data$average_windspeed,
+  reverse = TRUE
 )
 
 min_windspeed_palette <- colorNumeric(
-  palette = "Blues",
-  domain = data$min_windspeed
+  palette = "mako",
+  domain = data$min_windspeed,
+  reverse = TRUE
 )
 
 max_soil_water_palette <- colorNumeric(
@@ -92,14 +93,6 @@ min_soil_water_palette <- colorNumeric(
   palette = "RdYlBu",
   domain = data$min_soil_water
 )
-
-precipitation_palette <- colorNumeric(
-  palette = "RdYlBu",
-  domain = list(data$total_precipitation))
-
-evaporation_palette <- colorNumeric(
-  palette = "RdYlBu",
-  domain = list(data$total_evaporation_transpiration))
 
 # ========================================
 # UI
@@ -166,6 +159,19 @@ server <- function(input, output){
                    "Total Precipitation" = joined$total_precipitation,
                    "Total Evaporation via Transpiration" = joined$total_evaporation_transpiration)
     
+    if (input$var == "Total Precipitation"){
+      precipitation_palette <- colorNumeric(
+        palette = "mako",
+        domain = value,
+        reverse = TRUE)
+    }
+    if(input$var == "Total Evaporation via Transpiration"){
+      evaporation_palette <- colorNumeric(
+        palette = "mako",
+        domain = value,
+        reverse = TRUE)
+    }
+    
     pal <- switch(input$var,
                   "High Temperature" = high_temperature_palette,
                   "Average Temperature" = avg_temperature_palette,
@@ -182,6 +188,21 @@ server <- function(input, output){
                   "Total Precipitation" = precipitation_palette,
                   "Total Evaporation via Transpiration" = evaporation_palette)
     
+    unit <- switch(input$var,
+                   "High Temperature" = " (°C)",
+                   "Average Temperature" = " (°C)",
+                   "Low Temperature" = " (°C)",
+                   "High Dewpoint" = " (°C)",
+                   "Average Dewpoint" = " (°C)",
+                   "Low Dewpoint" = " (°C)",
+                   "Maximum Windspeed" = " (m/s)",
+                   "Average Windspeed" = " (m/s)",
+                   "Minimum Windspeed" = " (m/s)",
+                   "Maximum Soil Moisture" = " (m³/m³)",
+                   "Average Soil Moisture" = " (m³/m³)",
+                   "Minimum Soil Moisture" = " (m³/m³)",
+                   "Total Precipitation" = " (cm equivalent)",
+                   "Total Evaporation via Transpiration" = " (cm equivalent)")
     leaflet(joined) %>%
       addTiles() %>%
       addPolygons(
@@ -200,7 +221,15 @@ server <- function(input, output){
         ),
         popup = ~paste0(ADM3_EN, paste("<br/>", input$var, ": "), value)
       ) %>%
-      addLegend(pal = pal, values = ~value, opacity = 0.7, title = paste(input$var, "<br/>", input$date), position = "bottomright")
+      addLegend(pal = pal, 
+                values = ~value, 
+                opacity = 0.7, 
+                title = paste(input$var, 
+                              "<br/>", 
+                              unit, 
+                              "<br/>", 
+                              input$date), 
+                position = "bottomright")
   })
 }
 
